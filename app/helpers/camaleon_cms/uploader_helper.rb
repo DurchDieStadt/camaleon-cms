@@ -84,7 +84,11 @@ module CamaleonCms::UploaderHelper
     w, h = cama_uploader.thumb[:w], cama_uploader.thumb[:h]
     w, h = thumb_size.split('x') if thumb_size.present?
     uploaded_io = File.open(uploaded_io) if uploaded_io.is_a?(String)
-    path_thumb = cama_resize_and_crop(uploaded_io.path, w, h)
+    if w.present? && h.present?
+      path_thumb = cama_resize_and_crop(uploaded_io.path, w, h)
+    else
+      path_thumb = cama_crop_image(uploaded_io.path, w, h, 0, 0, true, false)
+    end
     thumb = cama_uploader.add_file(path_thumb, cama_uploader.version_path(key), is_thumb: true, same_name: true)
     FileUtils.rm_f(path_thumb)
     thumb
