@@ -4,8 +4,8 @@
     <% if field.options[:post_types].present? %>
     <% (field.options[:post_types].include?("all") ? current_site.post_types : current_site.post_types.where(id: field.options[:post_types])).each do |pt| %>
         <optgroup label="<%= pt.decorate.the_title %>">
-        <% pt.posts.public_posts.each do |post| post = post.decorate %>
-            <option value="<%= post.id %>"><%= post.the_title %></option>
+        <% pt.posts.public_posts.each do |post| pst = post.decorate %>
+            <option value="<%= pst.id %>"><%= "#{pst.the_title} (#{pst.id})" %></option>
         <% end %>
         </optgroup>
     <%  end %>
