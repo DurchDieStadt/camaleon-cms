@@ -30,13 +30,15 @@ module CamaleonCms::UploaderHelper
     uploaded_io = File.open(uploaded_io) if uploaded_io.is_a?(String)
     uploaded_io = File.open(cama_resize_upload(uploaded_io.path, settings[:dimension])) if settings[:dimension].present? # resize file into specific dimensions
 
+    generate_thumb = File.extname(uploaded_io.path).downcase != '.ico'
+
     settings = settings.to_sym
     settings[:uploaded_io] = uploaded_io
     settings = {
         folder: "",
         maximum: current_site.get_option('filesystem_max_size', 100).to_f.megabytes,
         formats: "*",
-        generate_thumb: true,
+        generate_thumb: generate_thumb,
         temporal_time: 0,
         filename: ((cached_name || uploaded_io.original_filename) rescue uploaded_io.path.split("/").last).cama_fix_filename,
         file_size: File.size(uploaded_io.to_io),
