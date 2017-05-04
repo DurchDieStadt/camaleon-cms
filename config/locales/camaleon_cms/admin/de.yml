@@ -2,6 +2,7 @@ de:
   camaleon_cms:
     see_intro: 'Intro ansehen'
     welcome_message: 'Willkommen zu Camaleon CMS'
+    captcha_placeholder: 'Bitte geben Sie den Text aus dem Bild ein'
     page_not_exist: '<h1>ooops...</h1><h5>Die eingegebene Seite existiert nicht.</h5>'
     page_error_500: '<h1>ooops...</h1><h5>Error 500 Internal Server Error. Bitten wende dich an den System-Administrator.</h5>'
     admin:
