@@ -27,7 +27,7 @@ class CamaleonCms::HtmlMailer < ActionMailer::Base
     data[:cc_to] = [data[:cc_to]] if data[:cc_to].is_a?(String) || !data[:cc_to].present?
 
     mail_data = {to: email, subject: subject}
-    if @current_site.get_option("mailer_enabled") == 1
+    if @current_site.get_option("mailer_enabled") == 1 && Rails.env.production?
       mail_data[:delivery_method] = :smtp
       mail_data[:delivery_method_options] = {
         user_name: @current_site.get_option("email_username"),
