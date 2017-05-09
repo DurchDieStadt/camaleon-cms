@@ -7,11 +7,15 @@
                     <b>(slug = <%= @post_type.the_slug %>)</b> <%= link_to("<i class='fa fa-eye'></i> #{t("camaleon_cms.common.visit")}".html_safe, @post_type.the_url, class: 'btn btn-xs', target: '_blank') %>
                 </h4>
                 <%= link_to raw("<i class='fa fa-plus'></i> #{t('camaleon_cms.admin.post_type.add')} #{@post_type.the_title}"), {action: :new}, class: "btn btn-primary pull-right cama_ajax_request" if can? :create_post, @post_type %>
+                <%= link_to raw('<i class="fa fa-bars"></i>'),
+                            {action: :index, children_of: @post_type.id}, class: "btn btn-warning pull-right cama_ajax_request", style: "margin-right: 2px;",
+                            title: "#{@post_type.the_title} - #{t('camaleon_cms.admin.button.show_children_only', default: "Show children only")}" %>
             </div>
         </div>
     </div>
     <div class="panel-body">
         <div class="row" style="margin-bottom: 16px">
+            <% if @parent_of_children.nil? %>
             <div class="col-md-9">
                 <%= render partial: "camaleon_cms/admin/posts/filter_posts" %>
             </div>
@@ -23,6 +27,17 @@
                     </div>
                 </form>
             </div>
+            <% else %>
+              <% ch_op = @parent_of_children.decorate %>
+              <div class="col-md-10">
+                <div class="well well-sm">
+                  Es werden ausschließlich direkte Kinder von <strong><%= link_to ch_op.the_title, ch_op.the_edit_url %></strong> angezeigt.<br>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <%= button_to 'Diesen Modus verlassen', {action: :index}, method: :get, class: 'btn btn-warning pull-right' %>
+              </div>
+            <% end %>
         </div>
         <table class="table table-responsive table-hover table-striped" id="posts-table-list">
             <thead>
@@ -99,6 +114,9 @@
                             <%= link_to raw('<i class="fa fa-pencil"></i>'), {action: :edit, id: f.id}, class: "btn btn-default btn-xs cama_ajax_request", title: "#{t('camaleon_cms.admin.button.edit')}" if can? :update, f %>
                             <%= link_to raw('<i class="fa fa-trash"></i>'), {action: :trash, post_id: f.id, s: params[:s]},
                                         data: {confirm: t('camaleon_cms.admin.message.delete')}, class: "btn btn-danger btn-xs cama_ajax_request", title: "#{t('camaleon_cms.admin.button.move_trash')}" if can? :destroy, f %>
+                            <%= link_to raw('<i class="fa fa-bars"></i>'),
+                                        {action: :index, children_of: f.id}, class: "btn btn-warning btn-xs cama_ajax_request",
+                                        title: "#{t('camaleon_cms.admin.button.show_children_only', default: "Show children only")}" %>
                         <% end %>
                     </td>
                 </tr>

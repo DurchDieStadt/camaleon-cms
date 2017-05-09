@@ -51,7 +51,8 @@ class CamaleonCmsLocalUploader < CamaleonCmsUploader
         'created_at' => File.mtime(file_path),
         'dimension' => ''
     }.with_indifferent_access
-    res["thumb"] = version_path(res['url']) if res['format'] == 'image' && File.extname(file_path).downcase != '.gif'
+    ext = File.extname(file_path).downcase
+    res["thumb"] = version_path(res['url']) if res['format'] == 'image' && ext != '.gif' && ext != '.ico'
     if res['format'] == 'image'
       im = MiniMagick::Image.open(file_path)
       res['dimension'] = "#{im[:width]}x#{im[:height]}"

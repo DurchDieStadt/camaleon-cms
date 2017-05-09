@@ -7,21 +7,40 @@ class CamaleonCms::Admin::PostsController < CamaleonCms::AdminController
 
   def index
     authorize! :posts, @post_type
-    per_page = current_site.admin_per_page
-    posts_all = @post_type.posts.eager_load(:parent, :post_type)
-    if params[:taxonomy].present? && params[:taxonomy_id].present?
-      if params[:taxonomy] == "category"
-        cat_owner = current_site.full_categories.find(params[:taxonomy_id]).decorate
-        posts_all = cat_owner.posts
-        add_breadcrumb t("camaleon_cms.admin.post_type.category"), @post_type.the_admin_url("category")
-        add_breadcrumb cat_owner.the_title, cat_owner.the_edit_url
+    children_of = params[:children_of].to_i
+    if children_of > 0
+      begin
+        per_page = 999999
+        if @post_type.id == children_of
+          parent_post = @post_type
+          posts_all = @post_type.posts.published.where(post_parent: nil)
+        else
+          parent_post = @post_type.posts.find(children_of)
+          posts_all = parent_post.children
+        end
+        @parent_of_children = parent_post
+      rescue
+        flash[:error] =  t('camaleon_cms.admin.post.message.error', post_type: @post_type.decorate.the_title)
+        redirect_to cama_admin_path
+        return
       end
+    else
+      per_page = current_site.admin_per_page
+      posts_all = @post_type.posts.eager_load(:parent, :post_type)
+      if params[:taxonomy].present? && params[:taxonomy_id].present?
+        if params[:taxonomy] == "category"
+          cat_owner = current_site.full_categories.find(params[:taxonomy_id]).decorate
+          posts_all = cat_owner.posts
+          add_breadcrumb t("camaleon_cms.admin.post_type.category"), @post_type.the_admin_url("category")
+          add_breadcrumb cat_owner.the_title, cat_owner.the_edit_url
+        end
 
-      if params[:taxonomy] == "post_tag"
-        tag_owner = current_site.post_tags.find(params[:taxonomy_id]).decorate
-        posts_all = tag_owner.posts
-        add_breadcrumb t("camaleon_cms.admin.post_type.tags"), @post_type.the_admin_url("tag")
-        add_breadcrumb tag_owner.the_title, tag_owner.the_edit_url
+        if params[:taxonomy] == "post_tag"
+          tag_owner = current_site.post_tags.find(params[:taxonomy_id]).decorate
+          posts_all = tag_owner.posts
+          add_breadcrumb t("camaleon_cms.admin.post_type.tags"), @post_type.the_admin_url("tag")
+          add_breadcrumb tag_owner.the_title, tag_owner.the_edit_url
+        end
       end
     end
 
@@ -45,7 +64,6 @@ class CamaleonCms::Admin::PostsController < CamaleonCms::AdminController
     @btns = {published: "#{t('camaleon_cms.admin.post_type.published')} (#{posts_all.where(status: "published").size})", all: "#{t('camaleon_cms.admin.post_type.all')} (#{posts_all.no_trash.size})", pending: "#{t('camaleon_cms.admin.post_type.pending')} (#{posts_all.where(status: "pending").size})", draft: "#{t('camaleon_cms.admin.post_type.draft')} (#{posts_all.where(status: "draft").size})", trash: "#{t('camaleon_cms.admin.post_type.trash')} (#{posts_all.where(status: "trash").size})"}
     r = {posts: @posts, post_type: @post_type, btns: @btns, all_posts: posts_all, render: 'index', per_page: per_page }
     hooks_run("list_post", r)
-    per_page = 9999999 if @post_type.manage_hierarchy?
     @posts = r[:posts].paginate(:page => params[:page], :per_page => r[:per_page])
     render r[:render]
   end
