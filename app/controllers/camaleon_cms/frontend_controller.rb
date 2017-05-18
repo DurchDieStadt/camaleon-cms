@@ -132,6 +132,7 @@ class CamaleonCms::FrontendController < CamaleonCms::CamaleonController
   # render a post from draft
   def draft_render
     post_draft = current_site.posts.drafts.find(params[:draft_id])
+    hooks_run("on_render_draft", {post: post_draft})
     @object = post_draft
     if can?(:update, post_draft)
       render_post(post_draft)
