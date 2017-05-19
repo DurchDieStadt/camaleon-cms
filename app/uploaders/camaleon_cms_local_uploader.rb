@@ -1,4 +1,7 @@
 class CamaleonCmsLocalUploader < CamaleonCmsUploader
+  include CamaleonCms::SiteHelper
+  include CamaleonCms::HooksHelper
+
   PRIVATE_DIRECTORY = 'private'
   def browser_files(prefix = '/', objects = {})
     objects[prefix] = {files: {}, folders: {}}
@@ -57,6 +60,7 @@ class CamaleonCmsLocalUploader < CamaleonCmsUploader
       im = MiniMagick::Image.open(file_path)
       res['dimension'] = "#{im[:width]}x#{im[:height]}"
     end
+    hooks_run("before_saving_image", res)
     res
   end
 
