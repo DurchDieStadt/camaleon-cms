@@ -17,6 +17,10 @@ class CamaleonCms::Admin::SettingsController < CamaleonCms::AdminController
     @site = current_site
     cache_slug = @site.slug
     if @site.update(params.require(:site).permit!)
+      r = { site: @site, params: params }
+      hooks_run("on_site_saved", r)
+      params = r[:params]
+      @site = r[:site]
       @site.set_options(params[:options]) if params[:options].present?
       @site.set_metas(params[:metas]) if params[:metas].present?
       @site.set_field_values(params[:field_options])
