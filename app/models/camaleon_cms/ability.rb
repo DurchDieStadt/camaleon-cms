@@ -55,11 +55,7 @@ class CamaleonCms::Ability
       end
 
       can :edit_publish, CamaleonCms::Post do |post|
-        ids_edit_publish.to_i.include?(post.post_type.id) && post.published? && post.user_id == user.id
-      end
-
-      can :publish, CamaleonCms::Post do |post|
-        ids_publish.to_i.include?(post.post_type.id)
+        ids_edit_publish.to_i.include?(post.post_type.id) && post.user_id == user.id
       end
 
       can :destroy, CamaleonCms::Post do |post|
