@@ -39,7 +39,7 @@
             <div class="form-group">
                 <label class=" control-label"><%= t('camaleon_cms.admin.post_type.published')%></label>
                 <select id="post_status" name="post[status]" class="form-control select">
-                    <% if can? :publish_post, @post_type %>
+                    <% if can?(:edit_publish, @post) || can?(:publish, @post) %>
                         <option class="" value="published" <%= (@post[:status] == "published") ? "selected": "" %> ><%= t('camaleon_cms.admin.post_type.published')%></option>
                     <% end  %>
                     <option value="pending" <%= (@post[:status] == "pending") ? "selected": "" %>><%= t('camaleon_cms.admin.table.pending')%></option>

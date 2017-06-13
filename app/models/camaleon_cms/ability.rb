@@ -49,11 +49,17 @@ class CamaleonCms::Ability
 
       can :update, CamaleonCms::Post do |post|
         pt_id = post.post_type.id
-        r = false
-        r ||= ids_edit.to_i.include?(pt_id) && post.user_id == user.id rescue false
-        r ||= ids_edit_publish.to_i.include?(pt_id) && post.published? rescue false
-        r ||= ids_edit_other.to_i.include?(pt_id) && post.user_id != user.id rescue false
-        r
+        (ids_edit.to_i.include?(pt_id) && post.user_id == user.id) ||
+          (ids_edit_publish.to_i.include?(pt_id) && post.published? && post.user_id == user.id) ||
+            (ids_edit_other.to_i.include?(pt_id) && post.user_id != user.id)
+      end
+
+      can :edit_publish, CamaleonCms::Post do |post|
+        ids_edit_publish.to_i.include?(post.post_type.id) && post.published? && post.user_id == user.id
+      end
+
+      can :publish, CamaleonCms::Post do |post|
+        ids_publish.to_i.include?(post.post_type.id)
       end
 
       can :destroy, CamaleonCms::Post do |post|
