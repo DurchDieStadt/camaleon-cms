@@ -1,8 +1,5 @@
 class CamaleonCms::CamaleonController < ApplicationController
-  add_flash_types :warning
-  add_flash_types :error
-  add_flash_types :notice
-  add_flash_types :info
+  add_flash_types :warning, :error, :notice, :info
 
   include CamaleonCms::CamaleonHelper
   include CamaleonCms::SessionHelper
@@ -50,7 +47,7 @@ class CamaleonCms::CamaleonController < ApplicationController
     # PluginRoutes.enabled_apps(current_site, current_theme.slug).each{|plugin| plugin_load_helpers(plugin) }
 
     # initializing short codes
-    shortcodes_init()
+    shortcodes_init
 
     # initializing before and after contents
     cama_html_helpers_init
