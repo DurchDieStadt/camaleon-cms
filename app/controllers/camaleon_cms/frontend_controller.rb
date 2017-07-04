@@ -157,7 +157,7 @@ class CamaleonCms::FrontendController < CamaleonCms::CamaleonController
       if params[:format] == 'html' || !params[:format].present?
         page_not_found()
       else
-        render nothing: true, status: 404
+        head 404
       end
     else
       @post = @post.decorate
